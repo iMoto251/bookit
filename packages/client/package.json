@@ -13,7 +13,6 @@
     "typescript": "^4.1.5"
   },
   "devDependencies": {
-    "@parcel/transformer-posthtml": "2.0.0-nightly.587",
     "parcel": "^2.0.0-beta.1",
     "sass": "^1.32.7"
   }
