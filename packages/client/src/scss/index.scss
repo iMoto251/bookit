@@ -1,9 +1,6 @@
 @import "normalize.css/normalize.css";
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    background-color: #333;
-}
+@import "variables";
+@import "base";
+@import "components/login";
+@import "components/form";

@@ -1,0 +1,17 @@
+.login {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login__brand {
+  flex: 0 0 50%;
+  align-self: center;
+  color: $brand_color;
+  font-size: 4rem;
+  text-align: center;
+}
+
+.login__form {
+  flex: 0 0 50%;
+  align-self: center;
+}
