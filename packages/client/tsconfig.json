@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "h",
+    "module": "commonjs",
+    "paths": {
+      "net": ["../net"]
+    },
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "rootDir": "src",
+    "strictNullChecks": true
+  }
+}

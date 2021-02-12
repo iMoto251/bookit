@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "paths": {
+        "net": ["../net"]
+      },
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "rootDir": "src",
+      "strictNullChecks": true
+    }
+  }
+  

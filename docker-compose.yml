@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  server:
+    build: ./packages/server
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgres://postgres:password@database/postgres
+    links:
+      - "database"
+    volumes:
+      - .:/usr/src/app:ro
+      - node_modules:/node_modules
+  client:
+    build: ./packages/client
+    depends_on:
+      - database
+    volumes:
+      - .:/usr/src/app:ro
+      - node_modules:/node_modules
+  gateway:
+    depends_on:
+      - server
+      - client
+    image: nginx
+    ports:
+      - "8080:8080"
+    links:
+      - "server"
+      - "client"
+    volumes:
+      - ./dev/nginx:/etc/nginx/templates:ro
+
+volumes:
+  node_modules:
+  postgres_data:
