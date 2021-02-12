@@ -19,16 +19,12 @@ services:
       - "database"
     volumes:
       - .:/usr/src/app:ro
-      - node_modules:/node_modules
-      - yarn_cache:/yarn_cache
   client:
     build: ./packages/client
     depends_on:
       - database
     volumes:
       - .:/usr/src/app:ro
-      - node_modules:/node_modules
-      - yarn_cache:/yarn_cache
   gateway:
     depends_on:
       - server
@@ -43,6 +39,4 @@ services:
       - ./dev/nginx:/etc/nginx/templates:ro
 
 volumes:
-  node_modules:
-  yarn_cache:
   postgres_data:
