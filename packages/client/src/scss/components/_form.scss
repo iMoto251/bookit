@@ -23,4 +23,17 @@
       outline: 0;
     }
   }
+
+  &__submit {
+    background-color: $brand_color;
+    color: $text_color;
+    padding: 0.5rem;
+    border-radius: 0.1rem;
+    border: 0;
+    cursor: pointer;
+
+    &:hover {
+      background-color: adjust-color($color: $brand_color, $lightness: -10%);
+    }
+  }
 }

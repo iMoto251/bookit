@@ -1,17 +1,20 @@
 .login {
   display: flex;
+  flex-wrap: wrap;
   min-height: 100vh;
-}
+  align-items: center;
+  justify-content: space-around;
 
-.login__brand {
-  flex: 0 0 50%;
-  align-self: center;
-  color: $brand_color;
-  font-size: 4rem;
-  text-align: center;
-}
+  &__brand {
+    flex: 0 0 50%;
+    color: $brand_color;
+    font-size: 4rem;
+    text-align: center;
+  }
 
-.login__form {
-  flex: 0 0 50%;
-  align-self: center;
+  &__form {
+    display: flex;
+    flex: 0 0 50%;
+    justify-content: space-around;
+  }
 }
