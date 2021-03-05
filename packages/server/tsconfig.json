@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "paths": {
-        "net": ["../net"]
+        "$net": ["../net"]
       },
       "noImplicitAny": true,
       "noImplicitReturns": true,
@@ -10,4 +10,3 @@
       "strictNullChecks": true
     }
   }
-  
