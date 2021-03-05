@@ -1,7 +1,7 @@
 import { Component, h, render } from "preact";
 import { BrowserRouter } from 'react-router-dom';
 
-import App from "./pages/app";
+import App from "./containers/app";
 
 export class Main extends Component {
   render() {
