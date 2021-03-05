@@ -1,17 +1,15 @@
 import { Component, h, render } from "preact";
+import { BrowserRouter } from 'react-router-dom';
 
-//import { BrowserRouter as Router, Link, NavLink, Route, Switch } from 'react-router-dom';
-
-//import App from "./app";
-import LoginPage from './login';
-//import HomePage from './home';
-//import Help from './help';
+import App from "./pages/app";
 
 export class Main extends Component {
   render() {
     return (
       <div>
-        <LoginPage />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </div>
     );
   }

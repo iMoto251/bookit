@@ -11,6 +11,7 @@ module.exports = (env, argv) => {
       port: 8080,
       host: "0.0.0.0",
       disableHostCheck: true,
+      historyApiFallback: true,
     },
     entry: [path.resolve("src/index.tsx"), path.resolve("src/scss/index.scss")],
     output: {
