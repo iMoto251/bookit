@@ -5,28 +5,22 @@ import HomePage from './home';
 import LoginPage from "./login";
 import HelpPage from "./help";
 
-export default class App extends Component {
-  render(){
+export default function App(){
     return (
-      <main>
-        <BrowserRouter>
-            <div>
-            <Switch>
-              <Route exact path="/" component={HomePage}>
-                <HomePage />
-              </Route>
-              <Route exact path="/login" component={LoginPage}>
-                <LoginPage />
-              </Route>
-              <Route exact path="/help" component={HelpPage}>
-                <HelpPage />
-              </Route>
-            </Switch>
-            </div>
-        </BrowserRouter>
-      </main>
+      <BrowserRouter>
+        <div>
+          <Switch>
+            <Route exact path="/" component={HomePage}>
+              <HomePage />
+            </Route>
+            <Route exact path="/login" component={LoginPage}>
+              <LoginPage />
+            </Route>
+            <Route exact path="/help" component={HelpPage}>
+              <HelpPage />
+            </Route>
+          </Switch>
+        </div>
+      </BrowserRouter>
     );
   }
-}
-
-render(<App />, document.body)
