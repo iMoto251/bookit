@@ -29,7 +29,7 @@ let sequence = 0;
  * A full-duplex, validated message channel.
  */
 export class Message<Request, Response> {
-  private static channel?: Channel<unknown>;
+  private static channel?: Channel<MessageProps>;
   private static named = new Map<string, Message<unknown, unknown>>();
   private static waiting = new Map<number, (value: unknown) => void>();
   private static TIMEOUT = 60;
@@ -55,7 +55,7 @@ export class Message<Request, Response> {
    * Sets the `Channel` that all `Message`s will send through. Calling this function
    * more than once will result in an error.
    */
-  public static setGlobalChannel(channel: Channel<unknown>) {
+  public static setGlobalChannel(channel: Channel<MessageProps>) {
     if (this.channel) {
       throw "Cannot assign the global messaging channel more than once";
     }
@@ -115,15 +115,20 @@ export class Message<Request, Response> {
     return new Promise((resolve, reject) => {
       sequence += 1;
 
-      Message.channel.send(
+      Message.channel!.send(
         Object.assign({}, req, {
-          id: sequence,
+          seq: sequence,
           kind: this.kind,
           timestamp: Date.now(),
         })
       );
 
-      let timeout;
+      let timeout: ReturnType<typeof setTimeout>;
+
+      timeout = setTimeout(() => {
+        clearTimeout(timeout);
+        reject("Response timed out");
+      }, Message.TIMEOUT);
 
       Message.waiting.set(sequence, (res) => {
         clearTimeout(timeout);
@@ -136,8 +141,6 @@ export class Message<Request, Response> {
           reject(res);
         }
       });
-
-      timeout = setTimeout(() => reject("Response timed out"), Message.TIMEOUT);
     });
   }
 

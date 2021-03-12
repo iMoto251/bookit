@@ -2,11 +2,12 @@
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "net": ["../../net/src"]
+      "@net": ["../net/"]
     },
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "baseUrl": ".",
     "rootDir": "src",
     "strictNullChecks": true
   }

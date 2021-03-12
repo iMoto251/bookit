@@ -24,17 +24,19 @@ function iface<T extends { [K: string]: Check<any> }>(
   checks: T
 ): Check<{ [K in keyof T]: CheckOf<T[K]> }> {
   return ((value) => {
-    if (typeof value !== "object") {
-      return false;
-    }
+    if (value && typeof value === "object") {
+      for (let key in checks) {
+        const inner = (value as any)[key as string];
 
-    for (let key in checks) {
-      if (!value.hasOwnProperty(key) || !checks[key](value[key as string])) {
-        return false;
+        if (!checks[key](inner)) {
+          return false;
+        }
       }
+
+      return true;
     }
 
-    return true;
+    return false;
   }) as Check<{ [K in keyof T]: CheckOf<T[K]> }>;
 }
 
