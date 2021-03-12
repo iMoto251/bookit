@@ -1,20 +1,17 @@
-import { h } from 'preact';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-const homeLink : string = '/';
+import * as React from "react";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+const homeLink: string = "/";
 
 export default function Header() {
-    return(
-        <Router>
-            <div>
-                <nav class="nav">
-                    <h1>
-                        <a href='/'>Home </a>
-                        <a href='/login'>Login </a>
-                        <a href='/help'>Help </a>
-                    </h1>
-                </nav>
-            </div>
-        </Router>
-        
-    )
+  return (
+    <div>
+      <nav className="nav">
+        <h1>
+          <Link to="/">Home</Link>
+          <Link to="/login">Login </Link>
+          <Link to="/help">Help </Link>
+        </h1>
+      </nav>
+    </div>
+  );
 }

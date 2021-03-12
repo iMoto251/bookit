@@ -1,18 +1,19 @@
-import { Component, h, render } from "preact";
-import { BrowserRouter } from 'react-router-dom';
+import * as React from "react";
+import { render } from "react-dom";
 
 import App from "./containers/app";
 
-export class Main extends Component {
+export class Main extends React.Component {
   render() {
     return (
       <div>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <App />
       </div>
     );
   }
 }
 
-render(<Main />, document.body);
+const target = document.createElement("div");
+document.body.appendChild(target);
+
+render(<Main />, target);

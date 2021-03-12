@@ -1,11 +1,11 @@
-import { h, Component, render } from 'preact';
+import * as React from "react";
 
 export default function Help() {
-    return (
-      <div class="login">
+  return (
+    <div className="login">
       <div className="login__brand">
         <div className="login__logo">Help Page</div>
       </div>
     </div>
-    );
-  }
+  );
+}
