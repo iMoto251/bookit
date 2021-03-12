@@ -3,20 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "react",
-    "jsxFactory": "h",
     "module": "commonjs",
-    "paths": {
-      "net": ["../net"],
-      "react": ["/node_modules/preact/compat", "node_modules/preact/compat"],
-      "react-dom/test-utils": [
-        "/node_modules/preact/test-utils",
-        "node_modules/preact/test-utils"
-      ],
-      "react-dom": [
-        "/node_modules/preact/test-utils",
-        "node_modules/preact/compat"
-      ]
-    },
     "sourceMap": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
