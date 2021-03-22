@@ -6,3 +6,15 @@
         margin-top: 60px;
     }
 }
+
+.faq{
+    padding: 20px;
+
+    &__question{
+        color: $brand_color;
+    }
+
+    &__answer{
+        color: white;
+    }
+}
