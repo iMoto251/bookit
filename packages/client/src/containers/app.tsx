@@ -6,7 +6,7 @@ import HelpPage from "./help";
 import Header from "../components/header"
 
 const NoMatchPage = () => (
-  <div>
+  <div className="login">
     <p>404</p>
   </div>
 );

@@ -2,10 +2,9 @@ import * as React from "react";
 
 export default function HomePage() {
   return (
-      <div className="login">
-        <div className="login__brand">
-          <div className="login__logo">Home Page</div>
-        </div>
+      <div className="home">
+        <h1 className="home__head">Welcome to BookIt!</h1>
+        <p>BookIt is a book recommendation website that recommends books based on genre, authors, and past books you've read input into our system</p>
       </div>
   );
 }
