@@ -1,0 +1,18 @@
+.rec{
+    margin-top: 60px;
+    padding: 20px;
+    ;
+
+    &__filters{
+        display: grid;
+        grid-template-columns: 100px 100px 100px
+    }
+
+    &__title{
+        color: $brand_color;
+    }
+
+    &__desc{
+        padding-left: 20px;
+    }
+}
