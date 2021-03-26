@@ -8,7 +8,7 @@ export default function Header() {
       <nav>
         <ul className="nav">
           <li>
-            <a href='/' className="nav__logo"><img src={Logo} height={50} /></a>
+            <Link to='/' className="nav__logo"><img src={Logo} /></Link>
             <Link to="/help" className="nav__links">Help</Link>
             <Link to="/login" className="nav__links">Login</Link>
             <Link to="/" className="nav__links" >Home</Link>
