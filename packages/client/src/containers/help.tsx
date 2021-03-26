@@ -15,7 +15,7 @@ export default function Help() {
         <p className="faq__answer">We use OpenLibrary's API of free books and have crawled Amazon's reviews to cumulate the best books for everyone.</p>
 
         <h2 className="faq__question">Are all the books free to read?</h2>
-        <p className="faq__answer">No. All of the books from OpenLibrary are free, but books coming from Amazon will have a price tag. You can filter by prices to make sure we are hitting price points that are comfortable to our consumer.</p>
+        <p className="faq__answer">No. There are free options listed, but not all of them are free. You can filter by prices to make sure we are hitting price points that are comfortable to our consumer.</p>
 
         <h2 className="faq__question">Is BookIt free to use?</h2>
         <p className="faq__answer">Yes! BookIt is and always will be free and open source.</p>

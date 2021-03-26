@@ -35,11 +35,71 @@ function SideNavFilters(){
   )
 }
 
-export default function Recommendation() {
+function FilterBooks(){
+  
+  return 0;
+}
+
+export default function RecommendationPage() {
   return (
     <div className="rec">
       <SideNavFilters />
         <div className="rec__body">
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
+          <div>
+            <h1 className="rec__title">Book Title</h1>
+            <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
+          </div>
+          <hr />
           <div>
             <h1 className="rec__title">Book Title</h1>
             <p className="rec__desc">Author, Genre, Short Description, ISBN</p>
