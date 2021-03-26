@@ -5,18 +5,13 @@
         width: 200px;
         height: 100%;
         position: fixed;
-        background-color: white;
+        background-color: rgb(50,50,50);
     }
 
     &__body{
         margin-top: 60px;
         margin-left: 200px;
         padding: 20px;
-    }
-    
-
-    &__filters{
-        display: grid;
     }
 
     &__title{

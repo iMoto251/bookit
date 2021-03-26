@@ -3,23 +3,34 @@ import * as React from "react";
 function SideNavFilters(){
   return(
     <div className="rec__sidenav">
-      <div className="rec__filters">
-          <select name="authors" id="authors">
-            <option value="Dickenson">Dickenson</option>
-            <option value="Poe">Poe</option>
-            <option value="Smith">Smith</option>
-          </select>
-          <select name="price" id="price">
-            <option value="0">Free</option>
-            <option value="20">Under 20</option>
-            <option value="40">Under 40</option>
-          </select>
-          <select name="genre" id="genre">
-            <option value="Horror">Horror</option>
-            <option value="Scifi">Sci-Fi</option>
-            <option value="Nonfiction">Non-Fiction</option>
-          </select>
-        </div>
+      <h3>Author</h3>
+        <p>
+          <input type="checkbox" id="Dickenson"/>
+          <label>Dickenson</label>
+        </p>
+        <p>
+          <input type="checkbox" id="Poe"/>
+          <label>Poe</label>
+        </p>
+        <p>
+          <input type="checkbox" id="Smith"/>
+          <label>Smith</label>
+        </p>
+      <h3>Price</h3>
+        <input type="range" min="1" max="100" value="50" id="myRange" />
+      <h3>Genre</h3>
+        <p>
+          <input type="checkbox" id="Horror"/>
+          <label>Horror</label>
+        </p>
+        <p>
+          <input type="checkbox" id="Mystery"/>
+          <label>Mystery</label>
+        </p>
+        <p>
+          <input type="checkbox" id="Romance"/>
+          <label>Romance</label>
+        </p>
     </div>
   )
 }
