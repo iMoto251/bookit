@@ -1,11 +1,22 @@
 .rec{
-    margin-top: 60px;
-    padding: 20px;
-    ;
+
+    &__sidenav{
+        margin-left: 0;
+        width: 200px;
+        height: 100%;
+        position: fixed;
+        background-color: white;
+    }
+
+    &__body{
+        margin-top: 60px;
+        margin-left: 200px;
+        padding: 20px;
+    }
+    
 
     &__filters{
         display: grid;
-        grid-template-columns: 100px 100px 100px
     }
 
     &__title{
