@@ -2,31 +2,15 @@ import express from "express";
 import helmet from "helmet";
 import { Channel } from "../../net/src/Channel";
 import { Message } from "../../net/src/Message/Message";
+import * as ws from "ws";
+import * as http from "http";
 import bodyParser from "body-parser";
 
-type JsonSafe =
-  | number
-  | string
-  | void
-  | Array<JsonSafe>
-  | { [K: string]: JsonSafe }
-  | { [K: number]: JsonSafe };
-
-class ApiChannel extends Channel<any> {
-  public send(value: any): Promise<void> {
-    return new Promise((_, reject) => {
-      reject("Cannot send messages from the server.");
-    });
-  }
-
-  public doReceive(value: any) {
-    this.receive(value);
+class ClientChannel extends Channel {
+  constructor(private ws: WebSocket) {
+    super();
   }
 }
-
-const channel = new ApiChannel();
-
-Message.setGlobalChannel(channel);
 
 const app = express();
 
@@ -46,8 +30,14 @@ app.use("/", async (req, res) => {
       })
     );
   }
-
-  channel.doReceive(json);
 });
 
-app.listen(8080);
+const server = http.createServer(app);
+const wss = new ws.Server({ clientTracking: false, noServer: true });
+const connections = new Set<ClientChannel>();
+
+server.on("upgrade", (req, socket, head) => {
+  wss.handleUpgrade(req, socket, head, (ws) => {
+    connections.add(new ClientChannel(ws));
+  });
+});

@@ -3,9 +3,14 @@ import { v } from "./validator";
 
 const TIMEOUT = 5000;
 
-type Simple = undefined | number | string | boolean | { [K: string]: Simple };
+export type Simple =
+  | undefined
+  | number
+  | string
+  | boolean
+  | { [K: string]: Simple };
 
-type MessageBody = {
+export type MessageBody = {
   [K: string]: Simple;
 };
 
@@ -16,11 +21,11 @@ const isWrapper = v.iface({
   timestamp: v.number,
 });
 
-type Wrapper = CheckOf<typeof isWrapper>;
+export type Wrapper = CheckOf<typeof isWrapper>;
 
-type WrappedMessageBody = MessageBody & Wrapper;
+export type WrappedMessageBody = MessageBody & Wrapper;
 
-type Message<Req extends MessageBody, Res extends MessageBody> = {
+export type Message<Req extends MessageBody, Res extends MessageBody> = {
   request: Check<Req>;
   response: Check<Res>;
 };
@@ -41,14 +46,10 @@ const Login = {
   }),
 };
 
-export const allMessages: MessageTable = {
-  Login,
-};
-
 /**
  * A full-duplex message channel.
  */
-export abstract class Channel<M extends MessageTable> {
+abstract class BaseChannel<M extends MessageTable> {
   constructor(private messageTypes: M) {}
 
   private requestListeners: {
@@ -141,5 +142,15 @@ export abstract class Channel<M extends MessageTable> {
     fn: (req: CheckOf<M[K]["request"]>) => Promise<CheckOf<M[K]["response"]>>
   ) {
     this.requestListeners[name] = fn;
+  }
+}
+
+const allMessages = {
+  Login,
+};
+
+export abstract class Channel extends BaseChannel<typeof allMessages> {
+  constructor() {
+    super(allMessages);
   }
 }
