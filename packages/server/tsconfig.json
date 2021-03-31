@@ -1,13 +1,14 @@
 {
-    "compilerOptions": {
-      "paths": {
-        "net": ["../net"]
-      },
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "noImplicitThis": true,
-      "rootDir": "src",
-      "strictNullChecks": true
-    }
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@net": ["../net/"]
+    },
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "baseUrl": ".",
+    "rootDir": "src",
+    "strictNullChecks": true
   }
-  
+}
