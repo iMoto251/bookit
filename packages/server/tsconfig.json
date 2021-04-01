@@ -2,7 +2,9 @@
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@shared/*": ["../shared/src/*"]
+      "@shared/*": [
+        "../shared/src/*"
+      ]
     },
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -12,7 +14,7 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "lib": [
-      "ESNext",
+      "ESNext"
     ]
   }
 }

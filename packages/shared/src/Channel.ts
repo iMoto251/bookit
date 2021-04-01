@@ -1,6 +1,9 @@
 import { Check, CheckOf, v } from "./validator";
 import { defaultSchema } from "./defaultSchema";
 
+/**
+ * Returns `true` if a value can be used as a wrapped message.
+ */
 export const isWrappedMessage = v.iface({
   kind: v.string,
   sequence: v.number,
@@ -8,8 +11,14 @@ export const isWrappedMessage = v.iface({
   timestamp: v.number,
 });
 
+/**
+ * A wrapped message that can be sent over a `Channel`.
+ */
 export type WrappedMessage = CheckOf<typeof isWrappedMessage>;
 
+/**
+ * A message validation schema. Each named message has an associated, validated request/response pair.
+ */
 type MessageSchema = {
   [K: string]: {
     request: Check<any>;
@@ -20,7 +29,7 @@ type MessageSchema = {
 /**
  * A channel that can send and receive validated messages.
  *
- * Implementors should include `sendWrapped` for sending wrapped messages and invoke `receiveWrapped` when wrapped
+ * Implementors should include `sendWrapped` for sending wrapped messages and invoke `receive*` when wrapped
  * messages are received. `Channel` makes no assumptions about the transport used; only that these two functions are
  * available.
  */
