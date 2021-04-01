@@ -96,6 +96,9 @@ export class WsChannel extends DefaultChannel {
     });
   }
 
+  /**
+   * Flush all pending messages.
+   */
   private flush() {
     for (let msg of this.batch) {
       this.ws.send(JSON.stringify(msg));
@@ -105,6 +108,9 @@ export class WsChannel extends DefaultChannel {
   }
 }
 
+/**
+ * The default API channel, connected to /api.
+ */
 export const apiChannel = new WsChannel(
   (document.location.protocol === "https:" ? "wss://" : "ws://") +
     document.location.host +
