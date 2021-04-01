@@ -54,10 +54,10 @@ function and<A, B>(a: Check<A>, b: Check<B>): Check<A & B> {
  * Composes a function that returns `true` if the provided value is undefined
  * or passes a given check.
  */
-function optional<T>(check: Check<T>): Check<T | void> {
+function optional<T>(check: Check<T>): Check<T | undefined> {
   return ((value) => {
-    typeof value === "undefined" || check(value);
-  }) as Check<T | void>;
+    return typeof value === "undefined" || check(value);
+  }) as Check<T | undefined>;
 }
 
 /**
