@@ -1,4 +1,4 @@
-import { DefaultChannel, WrappedMessage } from "../../net/src/Channel";
+import { DefaultChannel, WrappedMessage } from "@shared/Channel";
 
 /**
  * A client WebSocket channel that uses JSON message-passing as a transport.

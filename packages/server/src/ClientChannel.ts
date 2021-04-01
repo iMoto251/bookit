@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { DefaultChannel, WrappedMessage } from "../../net/src/Channel";
+import { DefaultChannel, WrappedMessage } from "@shared/Channel";
 
 /**
  * A channel to an individual client, over a single WebSocket connection.
