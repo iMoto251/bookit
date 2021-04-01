@@ -63,6 +63,10 @@ export class WsChannel extends DefaultChannel {
     this.backoff = Math.min(this.backoff * 2, this.maxBackoff);
 
     setTimeout(() => {
+      if (this.ws.readyState !== WebSocket.CLOSED) {
+        return;
+      }
+
       this.ws = new WebSocket(this.url);
 
       this.connect();
