@@ -2,6 +2,14 @@ import { v } from "./validator";
 
 export const defaultSchema = {
   /**
+   * Ping!
+   */
+  ping: {
+    request: v.iface({}),
+    response: v.iface({}),
+  },
+
+  /**
    * Log in, generating a session token or an error.
    */
   login: {

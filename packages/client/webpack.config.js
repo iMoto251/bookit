@@ -25,7 +25,13 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.tsx?$/i,
-          use: "ts-loader",
+          use: [
+            {
+              loader: "babel-loader",
+              options: { presets: ["@babel/preset-env"] },
+            },
+            "ts-loader",
+          ],
           exclude: /node_modules/,
         },
         {
@@ -43,7 +49,7 @@ module.exports = (env, argv) => {
       ],
     },
     resolve: {
-      extensions: ['.ts', '.tsx', '.js'],
+      extensions: [".ts", ".tsx", ".js"],
     },
   };
 };

@@ -101,8 +101,15 @@ export class WsChannel extends DefaultChannel {
   }
 }
 
-export const channel = new WsChannel(
+export const apiChannel = new WsChannel(
   (document.location.protocol === "https:" ? "wss://" : "ws://") +
     document.location.host +
     "/api"
 );
+
+setInterval(() => {
+  apiChannel
+    .send("ping", {})
+    .then((r) => console.log("Ping response: ", r))
+    .catch((err) => console.log("Ping error: ", err));
+}, 1000);

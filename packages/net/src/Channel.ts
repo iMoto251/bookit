@@ -10,7 +10,7 @@ export const isWrappedMessage = v.iface({
 
 export type WrappedMessage = CheckOf<typeof isWrappedMessage>;
 
-type MessageDefs = {
+type MessageSchema = {
   [K: string]: {
     request: Check<any>;
     response: Check<any>;
@@ -24,7 +24,7 @@ type MessageDefs = {
  * messages are received. `Channel` makes no assumptions about the transport used; only that these two functions are
  * available.
  */
-export abstract class Channel<Schema extends MessageDefs> {
+export abstract class Channel<Schema extends MessageSchema> {
   /**
    * The timeout duration for responses, in milliseconds.
    */
@@ -39,14 +39,14 @@ export abstract class Channel<Schema extends MessageDefs> {
    * *Request* listeners waiting for named messages.
    */
   private listeners: {
-    [K in keyof Schema]?: (data: unknown) => unknown;
+    [K in keyof Schema]?: (data: WrappedMessage) => void;
   } = {};
 
   /**
    * *Response* listeners waiting for a response to a request's sequence number.
    */
   private waiting: {
-    [K: number]: ((data: unknown) => void) | undefined;
+    [K: number]: ((data: WrappedMessage) => void) | undefined;
   } = {};
 
   /**
@@ -63,6 +63,7 @@ export abstract class Channel<Schema extends MessageDefs> {
   ): Promise<Schema[K]["response"]> {
     return new Promise((resolve, reject) => {
       const seq = ++this.sequence;
+
       let timeoutId: ReturnType<typeof setTimeout>;
 
       this.sendWrapped(
@@ -110,14 +111,14 @@ export abstract class Channel<Schema extends MessageDefs> {
     ) => Promise<CheckOf<Schema[K]["response"]>>
   ) {
     this.listeners[name] = (data) => {
-      if (isWrappedMessage(data) && this.isRequest(name, data)) {
+      if (this.isRequest(name, data)) {
         callback(data)
           .then((res) => {
             const sequence = ++this.sequence;
 
             this.sendWrapped(
               Object.assign({}, res, {
-                kind: data.name,
+                kind: data.kind,
                 sequence,
                 responseTo: data.sequence,
                 timestamp: Date.now(),
