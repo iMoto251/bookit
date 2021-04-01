@@ -1,35 +1,15 @@
 import express from "express";
 import helmet from "helmet";
-import { Channel } from "../../net/src/Channel";
-import { Message } from "../../net/src/Message/Message";
 import * as ws from "ws";
 import * as http from "http";
-import bodyParser from "body-parser";
-
-class ClientChannel extends Channel {
-  constructor(private ws: WebSocket) {
-    super();
-  }
-}
+import { ClientChannel } from "./ClientChannel";
 
 const app = express();
 
 app.use(helmet());
-app.use(bodyParser.text());
 
 app.use("/", async (req, res) => {
-  let json;
-
-  try {
-    json = JSON.parse(req.body);
-  } catch (err) {
-    res.status(400);
-    res.send(
-      JSON.stringify({
-        error: "Body is not valid JSON.",
-      })
-    );
-  }
+  res.json("This is a WebSocket endpoint; UPGRADE, yeah?");
 });
 
 const server = http.createServer(app);
@@ -38,6 +18,22 @@ const connections = new Set<ClientChannel>();
 
 server.on("upgrade", (req, socket, head) => {
   wss.handleUpgrade(req, socket, head, (ws) => {
-    connections.add(new ClientChannel(ws));
+    const channel = new ClientChannel(ws);
+
+    connections.add(channel);
+
+    console.log("New WebSocket connection: ", ws);
+
+    channel.listen("login", async (req) => {
+      console.log(req);
+
+      return {
+        success: false,
+        err: "Not implemented.",
+        token: undefined,
+      };
+    });
   });
 });
+
+server.listen(8080);

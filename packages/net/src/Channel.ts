@@ -1,156 +1,210 @@
-import { Check, CheckOf } from "./validator";
-import { v } from "./validator";
+import { Check, CheckOf, v } from "./validator";
+import { defaultSchema } from "./defaultSchema";
 
-const TIMEOUT = 5000;
-
-export type Simple =
-  | undefined
-  | number
-  | string
-  | boolean
-  | { [K: string]: Simple };
-
-export type MessageBody = {
-  [K: string]: Simple;
-};
-
-const isWrapper = v.iface({
+export const isWrappedMessage = v.iface({
   kind: v.string,
-  seq: v.number,
+  sequence: v.number,
   responseTo: v.optional(v.number),
   timestamp: v.number,
 });
 
-export type Wrapper = CheckOf<typeof isWrapper>;
+export type WrappedMessage = CheckOf<typeof isWrappedMessage>;
 
-export type WrappedMessageBody = MessageBody & Wrapper;
-
-export type Message<Req extends MessageBody, Res extends MessageBody> = {
-  request: Check<Req>;
-  response: Check<Res>;
-};
-
-export type MessageTable = {
-  [K: string]: Message<any, any>;
-};
-
-const Login = {
-  request: v.iface({
-    username: v.string,
-    password: v.string,
-  }),
-
-  response: v.iface({
-    success: v.boolean,
-    err: v.optional(v.string),
-  }),
+type MessageDefs = {
+  [K: string]: {
+    request: Check<any>;
+    response: Check<any>;
+  };
 };
 
 /**
- * A full-duplex message channel.
+ * A channel that can send and receive validated messages.
+ *
+ * Implementors should include `sendWrapped` for sending wrapped messages and invoke `receiveWrapped` when wrapped
+ * messages are received. `Channel` makes no assumptions about the transport used; only that these two functions are
+ * available.
  */
-abstract class BaseChannel<M extends MessageTable> {
-  constructor(private messageTypes: M) {}
+export abstract class Channel<Schema extends MessageDefs> {
+  /**
+   * The timeout duration for responses, in milliseconds.
+   */
+  protected timeout = 5000;
 
-  private requestListeners: {
-    [K in keyof M]?: (
-      req: CheckOf<M[K]["request"]>
-    ) => Promise<CheckOf<M[K]["response"]>>;
-  } = {};
-
-  private responseListeners = new Map<number, (value: unknown) => void>();
-
+  /**
+   * The current message sequence number; strictly increasing, and unique for each message.
+   */
   private sequence = 0;
 
-  protected abstract sendRaw(data: WrappedMessageBody): void;
+  /**
+   * *Request* listeners waiting for named messages.
+   */
+  private listeners: {
+    [K in keyof Schema]?: (data: unknown) => unknown;
+  } = {};
 
-  protected receive(data: unknown) {
-    if (isWrapper(data)) {
-      if (typeof data.responseTo !== "undefined") {
-        const listener = this.responseListeners.get(data.responseTo);
+  /**
+   * *Response* listeners waiting for a response to a request's sequence number.
+   */
+  private waiting: {
+    [K: number]: ((data: unknown) => void) | undefined;
+  } = {};
 
-        if (listener) {
-          listener(data);
-        }
-      } else {
-        const listener = this.requestListeners[data.kind];
-        const msg = this.messageTypes[data.kind];
+  /**
+   * Construct a new `Channel` with the given message definitions.
+   */
+  protected constructor(private defs: Schema) {}
 
-        if (msg && listener && msg.request(data)) {
-          // TODO(scriptis): `as unknown` makes me hurt
-          listener((data as unknown) as CheckOf<M[string]["response"]>).then(
-            (response) => {
-              const sequence = ++this.sequence;
-
-              const wrapped = Object.assign({}, response, {
-                kind: data.kind,
-                seq: sequence,
-                responseTo: data.seq,
-                timestamp: Date.now(),
-              });
-
-              this.sendRaw(wrapped);
-            }
-          );
-        }
-      }
-    }
-  }
-
-  public send<K extends keyof M>(
+  /**
+   * Send a request over the channel, returning a response.
+   */
+  public send<K extends keyof Schema>(
     name: K,
-    value: CheckOf<M[K]["request"]>
-  ): Promise<CheckOf<M[K]["response"]>> {
-    const msg = this.messageTypes[name];
-
+    data: CheckOf<Schema[K]["request"]>
+  ): Promise<Schema[K]["response"]> {
     return new Promise((resolve, reject) => {
-      const sequence = ++this.sequence;
+      const seq = ++this.sequence;
+      let timeoutId: ReturnType<typeof setTimeout>;
 
-      this.sendRaw(
-        Object.assign({}, value, {
+      this.sendWrapped(
+        Object.assign({}, data, {
           kind: name,
-          seq: sequence,
-          responseTo: undefined,
+          sequence: seq,
           timestamp: Date.now(),
         })
       );
 
-      let timeout: ReturnType<typeof setTimeout>;
+      this.waiting[seq] = (data) => {
+        delete this.waiting[seq];
+        clearTimeout(timeoutId);
 
-      timeout = setTimeout(() => {
-        this.responseListeners.delete(sequence);
-
-        reject("Response timed out.");
-      }, TIMEOUT);
-
-      this.responseListeners.set(sequence, (value) => {
-        this.responseListeners.delete(sequence);
-
-        clearTimeout(timeout);
-
-        if (msg.response(value)) {
-          resolve(value);
+        if (this.isResponse(name, data)) {
+          resolve(data);
         } else {
-          reject("Invalid response: " + value);
+          reject({
+            reason: "Invalid response payload for " + name,
+            context: data,
+          });
         }
-      });
+      };
+
+      timeoutId = setTimeout(() => {
+        delete this.waiting[seq];
+
+        reject({
+          reason: "Request timed out after " + this.timeout + "ms.",
+        });
+      }, this.timeout);
     });
   }
 
-  public on<K extends keyof M>(
+  /**
+   * Listen for a specific request on the channel, providing a response.
+   *
+   * Only one listener can be defined for an endpoint at a time. Calling this function more than once for the same
+   * endpoint will overwrite the prior listener.
+   */
+  public listen<K extends keyof Schema>(
     name: K,
-    fn: (req: CheckOf<M[K]["request"]>) => Promise<CheckOf<M[K]["response"]>>
+    callback: (
+      req: CheckOf<Schema[K]["request"]>
+    ) => Promise<CheckOf<Schema[K]["response"]>>
   ) {
-    this.requestListeners[name] = fn;
+    this.listeners[name] = (data) => {
+      if (isWrappedMessage(data) && this.isRequest(name, data)) {
+        callback(data)
+          .then((res) => {
+            const sequence = ++this.sequence;
+
+            this.sendWrapped(
+              Object.assign({}, res, {
+                kind: data.name,
+                sequence,
+                responseTo: data.sequence,
+                timestamp: Date.now(),
+              })
+            );
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
+    };
   }
+
+  /**
+   * Returns `true` if the provided value is a valid request message for `name`.
+   */
+  protected isRequest<K extends keyof Schema>(
+    name: K,
+    value: unknown
+  ): value is CheckOf<Schema[K]["request"]> {
+    return this.defs[name]["request"](value);
+  }
+
+  /**
+   * Returns `true` if the provided value is a valid response message for `name`.
+   */
+  protected isResponse<K extends keyof Schema>(
+    name: K,
+    value: unknown
+  ): value is CheckOf<Schema[K]["response"]> {
+    return this.defs[name]["response"](value);
+  }
+
+  /**
+   * Receive a wrapped message from the channel.
+   */
+  protected receiveWrapped(data: WrappedMessage) {
+    if (data.responseTo) {
+      const handler = this.waiting[data.responseTo];
+
+      if (handler) {
+        handler(data);
+      }
+
+      return;
+    }
+
+    const handler = this.listeners[data.kind];
+
+    if (handler) {
+      handler(data);
+    }
+  }
+
+  /**
+   * Receive an unknown value from the channel, attempting to interpret it as JSON. If the value can't be interpreted
+   * as a wrapped message, it is discarded.
+   */
+  protected receiveJSON(data: unknown) {
+    let decoded = {};
+
+    if (typeof data === "string") {
+      try {
+        decoded = JSON.parse(data);
+      } catch (e) {
+        /* do nothing. */
+      }
+    } else if (typeof data === "object" && data !== null) {
+      decoded = data;
+    }
+
+    if (isWrappedMessage(decoded)) {
+      this.receiveWrapped(decoded);
+    }
+  }
+
+  /**
+   * Send a wrapped message over the channel.
+   */
+  protected abstract sendWrapped(data: WrappedMessage): void;
 }
 
-const allMessages = {
-  Login,
-};
-
-export abstract class Channel extends BaseChannel<typeof allMessages> {
-  constructor() {
-    super(allMessages);
+/**
+ * A channel with the default message schema.
+ */
+export abstract class DefaultChannel extends Channel<typeof defaultSchema> {
+  protected constructor() {
+    super(defaultSchema);
   }
 }

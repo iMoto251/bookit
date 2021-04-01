@@ -1,45 +1,94 @@
-import { Channel, WrappedMessageBody } from "../../net/src/Channel";
+import { DefaultChannel, WrappedMessage } from "../../net/src/Channel";
 
-export class WsChannel extends Channel {
+/**
+ * A client WebSocket channel that uses JSON message-passing as a transport.
+ */
+export class WsChannel extends DefaultChannel {
+  /**
+   * The inner WebSocket this channel uses to communicate.
+   */
   private ws: WebSocket;
-  private backOff = 1000;
-  private maxBackoff = 8000;
-  private backOffSpread = 1000;
-  private batch = new Set<WrappedMessageBody>();
 
+  /**
+   * The current failure backoff, in milliseconds. The channel will try to reconnect after this time has elapsed.
+   */
+  private backoff = 100;
+
+  /**
+   * The minimum failure backoff, in milliseconds.
+   */
+  private minBackoff = 100;
+
+  /**
+   * The maximum failure backoff, in milliseconds.
+   */
+  private maxBackoff = 8000;
+
+  /**
+   * A random spread applied to the backoff to prevent spikes in server load.
+   */
+  private backOffSpread = 1000;
+
+  /**
+   * The current batch of outgoing messages.
+   */
+  private batch = new Set<WrappedMessage>();
+
+  /**
+   * Construct a new `WsChannel` using the provided websocket URI.
+   */
   constructor(private url: string) {
     super();
+
+    this.ws = new WebSocket(this.url);
 
     this.connect();
   }
 
-  private performBackoff() {
-    this.backOff = Math.min(this.backOff * 2, this.maxBackoff);
+  /**
+   * Send a wrapped message over the channel. Flushes all pending messages immediately if possible.
+   */
+  protected sendWrapped(data: WrappedMessage) {
+    this.batch.add(data);
 
-    setTimeout(() => {
-      this.connect();
-    }, this.backOff + Math.random() * this.backOffSpread);
+    if (this.ws.readyState === WebSocket.OPEN) {
+      this.flush();
+    }
   }
 
-  private connect() {
-    const ws = (this.ws = new WebSocket(this.url));
+  /**
+   * Performs exponential backoff if the endpoint is unreachable.
+   */
+  private performBackoff() {
+    this.backoff = Math.min(this.backoff * 2, this.maxBackoff);
 
-    ws.addEventListener("open", () => {
-      this.backOff = 1;
+    setTimeout(() => {
+      this.ws = new WebSocket(this.url);
+
+      this.connect();
+    }, this.backoff + Math.random() * this.backOffSpread);
+  }
+
+  /**
+   * Connects to the endpoint and registers event handlers.
+   */
+  private connect() {
+    this.ws.addEventListener("open", () => {
+      this.backoff = this.minBackoff;
 
       this.flush();
     });
 
-    ws.addEventListener("close", () => {
+    this.ws.addEventListener("close", () => {
       this.performBackoff();
     });
 
-    ws.addEventListener("error", () => {
+    this.ws.addEventListener("error", () => {
       this.performBackoff();
     });
 
-    ws.addEventListener("message", (ev) => {
-      this.receive(ev.data);
+    this.ws.addEventListener("message", (ev) => {
+      this.receiveJSON(ev.data);
     });
   }
 
@@ -47,13 +96,13 @@ export class WsChannel extends Channel {
     for (let msg of this.batch) {
       this.ws.send(JSON.stringify(msg));
     }
-  }
 
-  protected sendRaw(data: WrappedMessageBody) {
-    this.batch.add(data);
-
-    if (this.ws.readyState === WebSocket.OPEN) {
-      this.flush();
-    }
+    this.batch.clear();
   }
 }
+
+export const channel = new WsChannel(
+  (document.location.protocol === "https:" ? "wss://" : "ws://") +
+    document.location.host +
+    "/api"
+);

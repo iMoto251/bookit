@@ -1,9 +1,6 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "@net": ["../net/"]
-    },
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -13,6 +10,7 @@
     "esModuleInterop": true,
     "lib": [
       "ESNext",
+      "dom"
     ]
   }
 }

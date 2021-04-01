@@ -10,6 +10,10 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "rootDir": "src",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "lib": [
+      "ESNext",
+      "DOM",
+    ]
   }
 }
