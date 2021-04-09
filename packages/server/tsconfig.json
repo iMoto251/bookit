@@ -15,6 +15,9 @@
     "esModuleInterop": true,
     "lib": [
       "ESNext"
-    ]
+    ],
+    "target": "ESNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }
