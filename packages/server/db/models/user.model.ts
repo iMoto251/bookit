@@ -1,8 +1,6 @@
 
 import { BuildOptions, DataTypes, Model, Sequelize } from "sequelize";
 
-const sequelize = new Sequelize("mysql://root:asd123@localhost:3306/mydb");
-
 export interface UserAttributes {
     id: number;
     password: string;
@@ -18,8 +16,8 @@ export type UserStatic = typeof Model & {
 export function createUser (sequelize: Sequelize): UserStatic {
     return <UserStatic>sequelize.define("Users", {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV1,
+            type: DataTypes.INTEGER,
+            defaultValue: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
