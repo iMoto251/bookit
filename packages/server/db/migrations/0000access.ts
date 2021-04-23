@@ -3,32 +3,33 @@ import Sequelize, { QueryInterface } from "sequelize";
 
 module.exports = {
   async up({ context: queryInterface }: { context: QueryInterface }) {
-    await queryInterface.createTable("book", {
-      book-id: {
+    await queryInterface.createTable("access", {
+      id: {
         type: Sequelize.INTEGER,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true,
       },
-      title: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
-        // unique: true,
+        unique: true,
       },
-      genre: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      isbn: {
+      password: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-    //   createdOn: {
-    //     type: sequelize.DATE,
-    //     allowNull: false,
-    //   },
+      lastSeen: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      createdOn: {
+        type: sequelize.DATE,
+        allowNull: false,
+      },
     });
   },
   async down({ context: queryInterface }: { context: QueryInterface }) {
-    await queryInterface.dropTable("book");
+    await queryInterface.dropTable("access");
   },
 };

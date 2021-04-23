@@ -61,6 +61,22 @@ function optional<T>(check: Check<T>): Check<T | undefined> {
 }
 
 /**
+ * Composes a function that returns `true` if the provided value is undefined
+ * or passes a given check.
+ */
+ function array<T>(check: Check<T>): Check<Array<T>> {
+  return ((value) => {
+    if (!Array.isArray(value))
+      return false;
+    for (const item in value) {
+      if (!check(item))
+        return false;
+    }
+    return true;
+  }) as Check<Array<T>>;
+}
+
+/**
  * Utilities for validating the schema an arbitrary type at runtime.
  */
 export const v = {
@@ -72,4 +88,5 @@ export const v = {
   and,
   optional,
   boolean,
+  array,
 };

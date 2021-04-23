@@ -71,4 +71,12 @@ export const defaultSchema = {
       uptime: v.number,
     }),
   },
+  getBooksAlphabetical: {
+    request: v.iface({offset:v.number}),
+    response: v.iface({book:v.array(v.iface({
+      id: v.number,
+      title: v.string,
+      genre: v.string,
+    }))}),
+  }
 };
